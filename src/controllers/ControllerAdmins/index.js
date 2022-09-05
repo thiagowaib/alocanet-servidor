@@ -5,25 +5,68 @@ const jwt = require('jsonwebtoken')
 // * Exportação dos métodos do Controller
 module.exports = {
 
-    // => Cria novo objeto Admin
-    async novoAdmin(req, res){
+    /**
+     * @api {post} /novoAdmin Criar novo objeto Admin
+     * @apiName novoAdmin
+     * @apiGroup Admins
+     * @apiVersion 1.0.0
+     * 
+     * @apiPermission Nenhum
+     * 
+     * @apiBody {String} usuario Nome de usuário para o admin
+     * @apiBody {String} senha Senha para o admin  
+     * 
+     * @apiSuccessExample Exemplo de Sucesso:
+     * {
+     *  message: "Admin cadastrado"
+     * }
+     * @apiErrorExample Examplo de Erro:
+     * {
+     *  message: "Admin já existente"
+     * }
+     */
+    novoAdmin(req, res){
         const {usuario, senha} = req.body
 
-        const {HashPwd} = require('../../services')
-        const hashedSenha = await HashPwd(senha)
+        Admins.findOne({usuario: usuario}, async(err, admin) => {
+            if(admin) return res.status(400).send({message: "Admin já existente"})
 
-        const novoAdmin = new Admins({
-            usuario:usuario,
-            senha: hashedSenha
-        })
-
-        novoAdmin.save((err)=>{
-            if(err) return res.status(400).send({message: "Falha ao cadastrar", error: err})
-            else return res.status(201).send({message: "Admin cadastrado"})
+            const {HashPwd} = require('../../services')
+            const hashedSenha = await HashPwd(senha)
+            const novoAdmin = new Admins({
+                usuario:usuario,
+                senha: hashedSenha
+            })
+    
+            novoAdmin.save((err)=>{
+                if(err) return res.status(400).send({message: "Falha ao cadastrar", error: err})
+                else return res.status(201).send({message: "Admin cadastrado"})
+            })
+            
         })
     },
 
-    // => Autentifica o usuário Admin, retorna tokenAcesso
+    /**
+     * @api {post} /loginAdmin Logar Admin
+     * @apiName loginAdmin
+     * @apiGroup Admins
+     * @apiVersion 1.0.0
+     * 
+     * @apiPermission Nenhum
+     * 
+     * @apiBody {String} usuario Usuário do admin
+     * @apiBody {String} senha Senha do admin  
+     * 
+     * @apiSuccessExample Exemplo de Sucesso:
+     * {
+     *  message: "Login bem-sucedido"
+     *  tokenAcesso: [Token de Acesso JWT]
+     * }
+     * @apiErrorExample Examplo de Erro:
+     * {
+     *  message: "Senha invalida"
+     * }
+     */
     loginAdmin(req, res){
         const {usuario, senha} = req.body
         const {AuthPwd, SetExpDate} = require('../../services')
@@ -36,6 +79,7 @@ module.exports = {
                     // Dados inbutidos no JWT
                     const jwtPayload = {
                         usuario: admin.usuario,
+                        belongsTo: "Admins",
                         exp: SetExpDate(Date.now(), 1, "h")
                     }
 
@@ -46,15 +90,36 @@ module.exports = {
                     )
                     return res.status(202).send({message: "Login bem-sucedido", tokenAcesso})
                 } else {
-                    return res.status(401).send({message: "Senha Invalida"})
+                    return res.status(401).send({message: "Senha invalida"})
                 }
             } else {
-                return res.status(404).send({message: "Admin nao Cadastrado"})
+                return res.status(404).send({message: "Admin não cadastrado"})
             }
         })
     },
 
-    // => Recebe o ID de um admin via Params e o modifica de acordo com o body
+    /**
+     * @api {put} /updateAdmin/:id Modificar Admin via ID
+     * @apiName updateAdminById
+     * @apiGroup Admins
+     * @apiVersion 1.0.0
+     * 
+     * @apiPermission Nenhum
+     * 
+     * @apiParam {String} id ObjectId (_id) do Admin
+     * 
+     * @apiBody {String} [usuario] Usuário do admin
+     * @apiBody {String} [senha] Senha do admin  
+     * 
+     * @apiSuccessExample Exemplo de Sucesso:
+     * {
+     *  message: "Alterações salvas"
+     * }
+     * @apiErrorExample Examplo de Erro:
+     * {
+     *  message: "Falha ao salvar alterações"
+     * }
+     */
     updateAdminById(req, res){
         const queryId = req.params.id
 
@@ -69,8 +134,8 @@ module.exports = {
                 if(senha!=="" && senha) admin.senha = await HashPwd(senha)
     
                 admin.save((err)=>{
-                    if(err) return res.status(400).send({message: "Falha ao salvar alteracoes", error: err})
-                else return res.status(202).send({message: "Alteracoes Salvas"})
+                    if(err) return res.status(400).send({message: "Falha ao salvar alterações", error: err})
+                    else return res.status(202).send({message: "Alterações salvas"})
                 })
     
             } else {
@@ -79,14 +144,32 @@ module.exports = {
         })
     },
 
-    // => Recebe o ID de um admin via Params e remove-o
+    /**
+     * @api {delete} /removeAdmin/:id Remover Admin via ID
+     * @apiName removeAdminById
+     * @apiGroup Admins
+     * @apiVersion 1.0.0
+     * 
+     * @apiPermission Nenhum
+     * 
+     * @apiParam {String} id ObjectId (_id) do admin
+     * 
+     * @apiSuccessExample Exemplo de Sucesso:
+     * {
+     *  message: "Admin removido"
+     * }
+     * @apiErrorExample Examplo de Erro:
+     * {
+     *  message: "ID invalido"
+     * }
+     */
     removeAdminById(req, res){
         const removeId = req.params.id
 
         Admins.findByIdAndRemove(removeId, (err, admin)=>{
             if(err) return res.status(400).send({message: "Erro ao Remover Admin", error: err})
-            else if(admin===null) return res.status(400).send({message: "ID Invalido"})
-            else return res.status(200).send({message: "Admin Removido"})
+            else if(admin===null) return res.status(400).send({message: "ID invalido"})
+            else return res.status(200).send({message: "Admin removido"})
         })
     } 
 }
