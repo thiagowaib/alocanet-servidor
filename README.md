@@ -17,6 +17,7 @@ Você pode acessar a documentação mais atual da nossa API, fazendo o download 
 <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg" height="35px"> • **MongoDB**: Banco de Dados NoSQL
 
 <img src="https://a.fsdn.com/allura/mirror/apidoc/icon?86b58c0e96fc95ecba2b7b7c4a7da1534d522613afb6b99fa42b82900adfeefc?&w=90" height="35px"> • **ApiDoc**: Biblioteca de documentação de API via JS-Docs
+
 <br>
 
 ## 🤝 Colaboradores
