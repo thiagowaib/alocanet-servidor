@@ -7,6 +7,8 @@ const schema = new mongoose.Schema({
     numero: {
         type: Number,
         default: 0,
+        unique: true,
+        required: true,
     },
     senha: {
         type: String,

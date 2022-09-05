@@ -6,7 +6,9 @@ const mongoose = require('mongoose')
 const schema = new mongoose.Schema({
     usuario: {
         type: String,
-        default: ""
+        default: "",
+        unique: true,
+        required: true,
     },
     senha: {
         type: String,
