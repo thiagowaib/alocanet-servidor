@@ -167,8 +167,8 @@ module.exports = {
         const removeId = req.params.id
 
         Admins.findByIdAndRemove(removeId, (err, admin)=>{
-            if(err) return res.status(400).send({message: "Erro ao Remover Admin", error: err})
-            else if(admin===null) return res.status(400).send({message: "ID invalido"})
+            if(err) return res.status(400).send({message: "Erro ao remover admin", error: err})
+            else if(admin===null) return res.status(400).send({message: "ID inválido"})
             else return res.status(200).send({message: "Admin removido"})
         })
     } 
