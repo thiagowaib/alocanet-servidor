@@ -136,7 +136,7 @@ module.exports = {
         const {numero, senha} = req.body
         Apartamentos.findOne({numero: numero}, async(err, apto) => {
             const {HashPwd} = require('../../services')
-            if(senha!=="") apto.senha = await HashPwd(senha)
+            if(senha!=="" && senha) apto.senha = await HashPwd(senha)
             apto.save((err)=>{
                 if(err) return res.status(400).send({message: "Falha ao salvar alterações", error: err})
                 else return res.status(202).send({message: "Alterações Salvas"})
