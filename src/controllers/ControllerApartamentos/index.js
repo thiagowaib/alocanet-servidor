@@ -13,6 +13,10 @@ module.exports = {
      * 
      * @apiPermission Admin
      * @apiHeader {String} auth Token de acesso JWT
+     * @apiHeaderExample {json} Exemplo de Header:
+     * {
+     *  "auth": [Token de Acesso JWT]
+     * }
      * 
      * @apiBody {Number} numero Número do apartamento
      * @apiBody {String} senha Senha de acesso para o apartamento
@@ -108,6 +112,10 @@ module.exports = {
      * 
      * @apiPermission Admin
      * @apiHeader {String} auth Token de acesso JWT
+     * @apiHeaderExample {json} Exemplo de Header:
+     * {
+     *  "auth": [Token de Acesso JWT]
+     * }
      * 
      * @apiBody {Number} numero Número do apartamento
      * @apiBody {String} [senha] Nova Senha do apartamento  
@@ -143,6 +151,10 @@ module.exports = {
      * 
      * @apiPermission Admin
      * @apiHeader {String} auth Token de acesso JWT
+     * @apiHeaderExample {json} Exemplo de Header:
+     * {
+     *  "auth": [Token de Acesso JWT]
+     * }
      * 
      * @apiParam {Number} numero Número do apartamento
      * 
@@ -176,6 +188,10 @@ module.exports = {
      * 
      * @apiPermission Admin
      * @apiHeader {String} auth Token de acesso JWT
+     * @apiHeaderExample {json} Exemplo de Header:
+     * {
+     *  "auth": [Token de Acesso JWT]
+     * }
      * 
      * @apiParam {Number} numero Número do apartamento
      * 

@@ -108,8 +108,8 @@ module.exports = {
      * 
      * @apiParam {String} id ObjectId (_id) do Admin
      * 
-     * @apiBody {String} [usuario] Usuário do admin
-     * @apiBody {String} [senha] Senha do admin  
+     * @apiBody {String} [usuario="Usuário antigo"] Usuário do admin
+     * @apiBody {String} [senha="Senha antiga"] Senha do admin  
      * 
      * @apiSuccessExample Exemplo de Sucesso:
      * {
