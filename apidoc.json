@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "description": "Documentação da API criada para o sistema AlocaNet",
     "title": "AlocaNet API",
-    "url": "http://localhost:3030",
+    "url": "https://alocanet-servidor.glitch.me",
     "template": {
         "showRequiredLabels": true
     }
