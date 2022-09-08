@@ -1,9 +1,114 @@
 // * Importações
-const {Cancelamentos} = require('../../models')
+const {Cancelamentos, Locacoes, Apartamentos, Espacos} = require('../../models')
 
 // * Exportação dos métodos do Controller
 module.exports = {
 
-    
+    /**
+     * @api {put} /cancelar/:id Cancelar Locação
+     * @apiName cancelarById
+     * @apiGroup Cancelamentos
+     * @apiVersion 1.0.0
+     * 
+     * @apiPermission Apartamentos
+     * @apiHeader {String} auth Token de acesso JWT
+     * @apiHeaderExample {json} Exemplo de Header:
+     * {
+     *  "auth": [Token de Acesso JWT]
+     * }
+     * 
+     * @apiParam {Number} id _id (objectID) da Locação
+     * 
+     * @apiSuccessExample Exemplo de Sucesso:
+     * {
+     *  message: "Locação cancelada com sucesso"
+     * }
+     * @apiErrorExample Examplo de Erro:
+     * {
+     *  message: "Locação não encontrada"
+     * }
+     */
+    async cancelarById(req, res){
+        if(req.payload.belongsTo !== "Apartamentos") return res.status(403).send({message: "Permissão negada [!Apartamento]"})
 
+        // Busca dados da locação
+        const locacao = await Locacoes.findById(req.params.id)
+        if(locacao === null) return res.status(404).send({message: "Locação não encontrada"})
+
+        // Cria novo objeto de cancelamento
+        const cancelamento = new Cancelamentos({
+            data: locacao.data,
+            apartamentoId: locacao.apartamentoId,
+            apartamento: locacao.apartamento,
+            espacoId: locacao.espacoId,
+            espaco: locacao.espaco,
+            valor: locacao.valor,
+        })
+
+        // Realiza o salvamento do novo objeto
+        cancelamento.save((err, savedCancelamento) => {
+            if(err) return res.status(400).send({message: "Falha ao cancelar locação", error:err})
+
+            Espacos.findById(locacao.espacoId, (err, espaco) => {
+                // Remove a data de []ocupados do objeto Espaço
+                espaco.ocupados = espaco.ocupados.filter(data => data !== locacao.data)
+                espaco.save((err) => {
+                    if(err) return res.status(400).send({message: "Falha remover data do objeto espaço", error: err})
+                })
+
+                Apartamentos.findById(locacao.apartamentoId, (err, apto) => {
+                    // Remove o _id de []locacoes e adiciona em []cancelamentos do objeto Apartamento
+                    apto.locacoes = apto.locacoes.filter(id => id !== locacao._id.toString())
+                    apto.cancelamentos.push(savedCancelamento._id)
+    
+                    apto.save((err) => {
+                        if(err) return res.status(400).send({message: "Falha ao mover id de locação no objeto apartamento", error:err})
+                    })
+                })
+
+                // Procura e remove o objeto de Locação
+                Locacoes.findByIdAndRemove(locacao._id, (err) => {
+                    if(err) return res.status(400).send({message: "Falha ao remover locação após cancelamento", error: err})
+                    return res.status(200).send({message: "Locação cancelada com sucesso"})
+                })
+            })
+        })
+    },
+
+    /**
+     * @api {delete} /removerCancelamento/:id Remover Cancelamento
+     * @apiName removerCancelamentoById
+     * @apiGroup Cancelamentos
+     * @apiVersion 1.0.0
+     * 
+     * @apiPermission Nenhum
+     * 
+     * @apiParam {Number} id _id (objectID) do Cancelamento
+     * 
+     * @apiSuccessExample Exemplo de Sucesso:
+     * {
+     *  message: "Cancelamento removido"
+     * }
+     * @apiErrorExample Examplo de Erro:
+     * {
+     *  message: "Falha ao remover cancelamento"
+     * }
+     */
+    async removerCancelamentoById(req, res){
+
+        const cancelamentoId = req.params.id
+
+        // Busca e remove o objeto de Cancelamentos
+        Cancelamentos.findByIdAndRemove(cancelamentoId, (err, cancelamento) => {
+            if(err) return res.status(400).send({message: "Falha ao remover cancelamento", error: err})
+            
+            // Busca o Apartamento para retirar o ID do array de cancelamentos
+            Apartamentos.findById(cancelamento.apartamentoId, (err, apto) => {
+                apto.cancelamentos = apto.cancelamentos.filter(id => id !== cancelamentoId.toString())
+                apto.save((err)=>{if(err) return res.status(400).send({message:"Erro ao remover cancelamento do objeto Apartamento", error: err})})
+            })
+
+            return res.status(200).send({message: "Cancelamento removido"})
+        })
+    }
 }
