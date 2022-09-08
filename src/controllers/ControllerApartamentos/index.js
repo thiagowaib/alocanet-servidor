@@ -1,5 +1,5 @@
 // * Importações
-const {Apartamentos} = require('../../models')
+const {Apartamentos, Locacoes, Cancelamentos} = require('../../models')
 const jwt = require('jsonwebtoken')
 
 // * Exportação dos métodos do Controller
@@ -35,17 +35,21 @@ module.exports = {
 
         const {numero, senha} = req.body
 
+        // Busca pelo Apto via Número
         Apartamentos.findOne({numero: numero}, async(err, apto) => {
             if(apto) return res.status(400).send({message: "Apartamento já cadastrado"})
 
+            // Processo de criptografia da senha
             const {HashPwd} = require('../../services')
             const hashedSenha = await HashPwd(senha)
 
+            // Criação do novo objeto
             const novoApto = new Apartamentos({
                 numero: numero,
                 senha: hashedSenha
             })
     
+            // Salvamento do novo objeto
             novoApto.save((err)=>{
                 if(err) return res.status(400).send({message: "Falha ao cadastrar apartamento", error: err})
                 else return res.status(201).send({message: "Apartamento cadastrado"})
@@ -134,9 +138,15 @@ module.exports = {
         if(req.payload.belongsTo !== "Admins") return res.status(403).send({message: "Permissão negada [!Admin]"})
         
         const {numero, senha} = req.body
+        
+        // Busca o Apartamento via Número
         Apartamentos.findOne({numero: numero}, async(err, apto) => {
             const {HashPwd} = require('../../services')
+
+            // Criptografa e atribui a nova senha
             if(senha!=="" && senha) apto.senha = await HashPwd(senha)
+
+            // Salvamento do objeto
             apto.save((err)=>{
                 if(err) return res.status(400).send({message: "Falha ao salvar alterações", error: err})
                 else return res.status(202).send({message: "Alterações Salvas"})
@@ -173,6 +183,7 @@ module.exports = {
 
         const numero = req.params.numero
 
+        // Busca e remove o objeto
         Apartamentos.findOneAndRemove({numero: numero}, (err, apto) => {
             if(apto === null) return res.status(404).send({message: "Apartamento não encontrado"})
             else return res.status(200).send({message: "Apartamento descadastrado"})
@@ -181,13 +192,12 @@ module.exports = {
     
 
     /**
-     * @apiIgnore
      * @api {get} /consultarApto/:numero Consultar Apartamento
      * @apiName consultarAptoPorNumero
      * @apiGroup Apartamentos
      * @apiVersion 1.0.0
      * 
-     * @apiPermission Admin
+     * @apiPermission Admin | Apartamento
      * @apiHeader {String} auth Token de acesso JWT
      * @apiHeaderExample {json} Exemplo de Header:
      * {
@@ -198,84 +208,33 @@ module.exports = {
      * 
      * @apiSuccessExample Exemplo de Sucesso:
      * {
-     *  
+     *  "locacoes": [{Objeto Locação}, {Objeto Locação}],
+     *  "cancelamentos": [{Objeto Cancelamento}, {Objeto Cancelamento}]
      * }
      * @apiErrorExample Examplo de Erro:
      * {
-     *  
+     *  message: "Apartamento não encontrado"
      * }
      */
-    consultarApto(req, res){
-        if(req.payload.belongsTo !== "Admins") return res.status(403).send({message: "Permissão negada [!Admin]"})
-    
+    consultarApto(req, res){    
         const numero = req.params.numero
 
-        Apartamentos.findOne({numero: numero}, (err, apto) => {
-            if(apto === null) return res.status(404).send({message: "Apartamento nao Encontrado"})
+        Apartamentos.findOne({numero: numero}, async (err, apto) => {
+            if(apto === null) return res.status(404).send({message: "Apartamento nao encontrado"})
             const {locacoes, cancelamentos} = apto
-            return res.status(200).send({locacoes, cancelamentos})
-            /*
-            TODO:   Inserir bloco de código lógico para
-            TODO:   retornar as informações de  
-            TODO:   locação e cancelamentos
-            */
-        })
-    },
-
-    // =========================================
-    // ! SEÇÃO PERTENCENTE AO CONTROLLERLOCACAO
-    // !
-    // addLocacao(req, res){
-    //     if(req.payload.belongsTo !== "Apartamentos") return res.status(403).send({message: "Voce nao tem permissao para modificar esse apartamento"})
-
-    //     const {locacaoId} = req.body
-    //     const numero = req.payload.numero
-
-    //     Apartamentos.findOne({numero: numero}, (err, apto) => {
-    //         if(apto===null) return res.status(404).send({message: "Apartamento nao Encontrado"})
-    //         if(apto.locacoes.includes(locacaoId)) return res.status(200).send({message: "Locacao Adicionada"})
+            // return res.status(200).send({locacoes, cancelamentos})
             
-    //         apto.locacoes.push(locacaoId)
-    //         apto.save((err)=>{
-    //             if(err) return res.status(400).send({message: "Falha ao adicionar Locacao", error: err})
-    //             else return res.status(201).send({message: "Locacao Adicionada"})
-    //         })
-    //     })
+            // Compila os dados das Locações do Apto
+            let dadosLocacoes = await Promise.all(locacoes.map(async (id) => {
+                return await Locacoes.findById(id)
+            }))
 
-    //     /*
-    //         TODO: Inserir bloco lógico para
-    //         TODO: restrições de parâmetros
-    //     */
-    // },
-    
-    // cancelarLocacao(req, res){
-    //     if(req.payload.belongsTo !== "Apartamentos") return res.status(403).send({message: "Voce nao tem permissao para modificar esse apartamento"})
-        
-    //     const {locacaoId} = req.body
-    //     const numero = req.payload.numero
-
-    //     Apartamentos.findOne({numero: numero}, (err, apto) => {
-    //         if(apto===null) return res.status(404).send({message: "Apartamento nao Encontrado"})
-    //         if(!apto.locacoes.includes(locacaoId)) return res.status(404).send({message: "Locacao nao encontrada"})
-
-    //         apto.locacoes = apto.locacoes.filter(data => data !== locacaoId)
-
-    //         if(apto.cancelamentos.includes(locacaoId)) return res.status(400).send({message: "Cancelamento ja feito"})
-    //         apto.cancelamentos.push(locacaoId)
-
-    //         /*
-    //         TODO: Inserir bloco lógico para
-    //         TODO: restrições de parâmetros
-    //         */
-
-    //         /*  
-    //         TODO: Inserir bloco lógico
-    //         TODO: para cancelamento do objeto 
-    //         TODO: de Locação
-    //         */
-
-    //         return res.status(200).send({message: `Locacao ${locacaoId} cancelada!`})
-    //     })
-    // }
-    // =========================================
+            // Compila os dados dos Cancelamentos do Apto
+            let dadosCancelamentos = await Promise.all(cancelamentos.map(async (id) => {
+                return await Cancelamentos.findById(id)
+            }))
+            
+            return res.status(200).send({locacoes: dadosLocacoes, cancelamentos: dadosCancelamentos})
+        })
+    }
 }
