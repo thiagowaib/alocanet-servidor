@@ -27,6 +27,8 @@ const initServidor = () => {
     app.use(express.json())
     app.use(cors())
 
+    app.use(express.static('public'))
+
     // Conexão com os endpoints em ./routes.js
     app.use(require('./routes'))
 

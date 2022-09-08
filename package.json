@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon .",
-    "doc": "apidoc"
+    "doc": "apidoc -e \"(node_modules|public)\" -o public"
   },
   "repository": {
     "type": "git",
