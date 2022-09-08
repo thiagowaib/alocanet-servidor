@@ -7,7 +7,7 @@ width="100%" height="200px">
 <br>
 
 ## 📄 Documentação
-Você pode acessar a documentação mais atual da nossa API, fazendo o download do repositório, e acessando o arquivo **index.html** dentro da pasta **doc/**.
+Você pode acessar a documentação mais atual da nossa API **[através desse site](https://alocanet-servidor.glitch.me/ "através desse site")**.
 
 <br>
 
