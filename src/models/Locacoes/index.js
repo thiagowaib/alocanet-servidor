@@ -5,8 +5,8 @@ const mongoose = require('mongoose')
 // * Definição do Schema
 const schema = new mongoose.Schema({
     data: {
-        type: Date,
-        default: null
+        type: String,
+        default: ""
     },
     apartamentoId: {
         type: String,
