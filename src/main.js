@@ -37,7 +37,7 @@ const initServidor = () => {
      */
     const servidor = require('http').Server(app)
     servidor.listen(process.env.SERVER_PORT || 5000, () => {
-        console.log(`Servidor AlocaNet online em ${process.env.SERVER_URL}:${process.env.SERVER_PORT}/`)
+        console.log(`Servidor AlocaNet online em ${process.env.SERVER_URL}\nAtravés da porta ${process.env.SERVER_PORT}/`)
     })
 }
 
