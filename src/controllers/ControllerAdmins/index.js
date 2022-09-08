@@ -31,13 +31,17 @@ module.exports = {
         Admins.findOne({usuario: usuario}, async(err, admin) => {
             if(admin) return res.status(400).send({message: "Admin já existente"})
 
+            // Processo de criptografia da senha
             const {HashPwd} = require('../../services')
             const hashedSenha = await HashPwd(senha)
+
+            // Criação do novo objeto
             const novoAdmin = new Admins({
                 usuario:usuario,
                 senha: hashedSenha
             })
     
+            // Salvamento do novo objeto
             novoAdmin.save((err)=>{
                 if(err) return res.status(400).send({message: "Falha ao cadastrar", error: err})
                 else return res.status(201).send({message: "Admin cadastrado"})
@@ -130,9 +134,11 @@ module.exports = {
                 const {usuario, senha} = req.body
                 const {HashPwd} = require('../../services')
 
+                // Modifica os atributos inseridos
                 if(usuario!=="" && usuario) admin.usuario = usuario
                 if(senha!=="" && senha) admin.senha = await HashPwd(senha)
     
+                // Salvamento das alterações
                 admin.save((err)=>{
                     if(err) return res.status(400).send({message: "Falha ao salvar alterações", error: err})
                     else return res.status(202).send({message: "Alterações salvas"})
@@ -166,6 +172,7 @@ module.exports = {
     removeAdminById(req, res){
         const removeId = req.params.id
 
+        // Busca e remoção do objeto
         Admins.findByIdAndRemove(removeId, (err, admin)=>{
             if(err) return res.status(400).send({message: "Erro ao remover admin", error: err})
             else if(admin===null) return res.status(400).send({message: "ID inválido"})

@@ -25,7 +25,10 @@ module.exports = {
         Parametros.findOne({}, (err, obj) => {
             if(obj!==null) return res.status(400).send({message: "Parâmetros já inicializados"})
 
+            // Inicializa o objeto de parâmetros
             const param = new Parametros()
+
+            // Salva o objeto de parâmetros
             param.save((err)=>{
                 if(err) return res.status(400).send({message: "Falha ao inicializar parâmetros", error: err})
                 else return res.status(201).send({message: "Parâmetros inicializados"})
@@ -59,6 +62,7 @@ module.exports = {
      buscarParametros(req, res){
         if(req.payload.belongsTo !== "Admins") return res.status(403).send({message: "Permissão negada [!Admin]"})
 
+        // Busca os parâmetros
         Parametros.findOne({}, (err, param) => {
             const dados = {
                 minDiasAlocar: param.minDiasAlocar,
@@ -99,16 +103,21 @@ module.exports = {
      modificarParametro(req, res){
         if(req.payload.belongsTo !== "Admins") return res.status(403).send({message: "Permissão negada [!Admin]"})
         
-        const tag = req.params.tag.toLowerCase()
-        let value = 0
+        const tag = req.params.tag.toLowerCase() //Parâmetro a ser alterado
+        let value = 0                            //Novo Valor do parâmetro
         
+        // Verifica se o valor inserido é um número
         try{
             value = parseInt(req.params.value)
-        }catch(err){return res.status(400).send({message: `Value '${value}' inválido`, error: err})}
+        }catch(err){
+            return res.status(400).send({message: `Value '${value}' inválido`, error: err})
+        }
 
+        // Busca o objeto de parâmetros
         Parametros.findOne({}, (err, param) => {
             if(err) return res.status(400).send({message: "Erro ao acessar parâmetros", error:err})
             
+            // Identifica qual parâmetro deve ser alterado
             switch (tag) {
                 case "mindiasalocar":
                     if(value) param.minDiasAlocar = value
@@ -155,29 +164,5 @@ module.exports = {
                     ]})
             }
         })
-    },
-
-    
-
-    // minDiasAlocar: {
-    //     type: Number,
-    //     default: 0
-    // },
-    // maxDiasAlocar: {
-    //     type: Number,
-    //     default: 0
-    // },
-    // minDiasCancelar: {
-    //     type: Number,
-    //     default: 0
-    // },
-    // maxDiasCancelar: {
-    //     type: Number,
-    //     default: 0
-    // },
-    // limiteLocacoes: {
-    //     type: Number,
-    //     default: 0
-    // }
-
+    }
 }

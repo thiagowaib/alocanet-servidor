@@ -37,11 +37,13 @@ module.exports = {
         Espacos.findOne({nome: nome}, async(err, espaco) => {
             if(espaco) return res.status(400).send({message: "Espaço já cadastrado"})
 
+            // Cria novo objeto
             const novoEspaco = new Espacos({
                 nome: nome,
                 valorAtual: valor
             })
-    
+
+            // Salvamento do novo objeto
             novoEspaco.save((err)=>{
                 if(err) return res.status(400).send({message: "Falha ao cadastrar espaço", error: err})
                 else return res.status(201).send({message: "Espaço cadastrado"})
@@ -55,7 +57,7 @@ module.exports = {
      * @apiGroup Espaços
      * @apiVersion 1.0.0
      * 
-     * @apiPermission Admin
+     * @apiPermission Admin | Apartamento
      * @apiHeader {String} auth Token de acesso JWT
      * @apiHeaderExample {json} Exemplo de Header:
      * {
@@ -73,8 +75,7 @@ module.exports = {
      * }
      */
     buscarEspacos(req, res){
-        if(req.payload.belongsTo !== "Admins") return res.status(403).send({message: "Permissão negada [!Admin]"})
-
+        // Busca os espaços e retorna seus dados
         Espacos.find({}, (err, espacos) => {
             const dados = espacos.map((espaco) => {
                 return {
@@ -118,11 +119,18 @@ module.exports = {
         if(req.payload.belongsTo !== "Admins") return res.status(403).send({message: "Permissão negada [!Admin]"})
         
         const queryId = req.params.id
+
+        // Busca o espaço via ID
         Espacos.findById(queryId, (err, espaco) => {
             if(espaco===null) return res.status(404).send({message: "Espaço não encontrado"})
+            
             const {nome, valor} = req.body
+
+            // Modifica os atributos inseridos
             if(nome!=="" && nome) espaco.nome = nome
             if(valor!==0 && valor) espaco.valorAtual = valor
+
+            // Salvamento dos atributos alterados
             espaco.save((err)=>{
                 if(err) return res.status(400).send({message: "Falha ao salvar alterações", error: err})
                 else return res.status(202).send({message: "Alterações Salvas"})
@@ -158,6 +166,8 @@ module.exports = {
         if(req.payload.belongsTo !== "Admins") return res.status(403).send({message: "Permissão negada [!Admin]"})
 
         const removeId = req.params.id
+
+        // Busca e remove o objeto
         Espacos.findByIdAndRemove(removeId, (err, espaco)=>{
             if(err) return res.status(400).send({message: "Erro ao remover espaço", error: err})
             else if(espaco===null) return res.status(400).send({message: "ID inválido"})
