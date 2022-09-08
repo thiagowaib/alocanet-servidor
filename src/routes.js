@@ -9,10 +9,10 @@ const {AuthTokenAcesso} = require('./middlewares')
 
 // * Definição dos Endpoints
 // ControllerAdmin Endpoints
-const {novoAdmin, loginAdmin, updateAdminById, removeAdminById} = require('./controllers')
+const {novoAdmin, loginAdmin, modificarAdminById, removeAdminById} = require('./controllers')
 routes.post('/novoAdmin', novoAdmin)
 routes.post('/loginAdmin', loginAdmin)
-routes.put('/updateAdmin/:id', updateAdminById)
+routes.put('/modificarAdmin/:id', modificarAdminById)
 routes.delete('/removeAdmin/:id', removeAdminById)
 
 // ControllerApartamentos Endpoints
@@ -31,6 +31,12 @@ routes.post('/novoEspaco', AuthTokenAcesso, novoEspaco)
 routes.get('/buscarEspacos', AuthTokenAcesso, buscarEspacos)
 routes.put('/modificarEspaco/:id', AuthTokenAcesso, modificarEspacoById)
 routes.delete('/removerEspaco/:id', AuthTokenAcesso, removerEspacoById)
+
+// ControllerParametros Endpoints
+const {initParametros, buscarParametros, modificarParametro} = require('./controllers')
+routes.get('/initParametros', initParametros)
+routes.get('/buscarParametros', AuthTokenAcesso, buscarParametros)
+routes.put('/modificarParametro/:tag/:value', AuthTokenAcesso, modificarParametro)
 
 // * Exportação das rotas para main.js
 module.exports = routes

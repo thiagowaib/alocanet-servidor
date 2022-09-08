@@ -99,8 +99,8 @@ module.exports = {
     },
 
     /**
-     * @api {put} /updateAdmin/:id Modificar Admin via ID
-     * @apiName updateAdminById
+     * @api {put} /modificarAdmin/:id Modificar Admin via ID
+     * @apiName modificarAdminById
      * @apiGroup Admins
      * @apiVersion 1.0.0
      * 
@@ -120,7 +120,7 @@ module.exports = {
      *  message: "Falha ao salvar alterações"
      * }
      */
-    updateAdminById(req, res){
+    modificarAdminById(req, res){
         const queryId = req.params.id
 
         Admins.findById(queryId, async (err, admin)=>{
@@ -171,5 +171,5 @@ module.exports = {
             else if(admin===null) return res.status(400).send({message: "ID inválido"})
             else return res.status(200).send({message: "Admin removido"})
         })
-    } 
+    }
 }
