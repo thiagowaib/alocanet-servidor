@@ -42,7 +42,7 @@ module.exports = {
      * @apiGroup Parâmetros
      * @apiVersion 1.0.0
      * 
-     * @apiPermission Admin
+     * @apiPermission Admin | Apartamento
      * @apiHeader {String} auth Token de acesso JWT
      * @apiHeaderExample {json} Exemplo de Header:
      * {
@@ -60,8 +60,6 @@ module.exports = {
      * }
      */
      buscarParametros(req, res){
-        if(req.payload.belongsTo !== "Admins") return res.status(403).send({message: "Permissão negada [!Admin]"})
-
         // Busca os parâmetros
         Parametros.findOne({}, (err, param) => {
             const dados = {
