@@ -23,7 +23,7 @@ module.exports = {
      * {
      *  message: "Locação cancelada com sucesso"
      * }
-     * @apiErrorExample Examplo de Erro:
+     * @apiErrorExample Exemplo de Erro:
      * {
      *  message: "Locação não encontrada"
      * }
@@ -89,7 +89,7 @@ module.exports = {
      * {
      *  message: "Cancelamento removido"
      * }
-     * @apiErrorExample Examplo de Erro:
+     * @apiErrorExample Exemplo de Erro:
      * {
      *  message: "Falha ao remover cancelamento"
      * }

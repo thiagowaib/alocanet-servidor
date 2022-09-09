@@ -110,7 +110,7 @@ module.exports = {
      * {
      *  message: "Alterações salvas"
      * }
-     * @apiErrorExample Examplo de Erro:
+     * @apiErrorExample Exemplo de Erro:
      * {
      *  message: "Falha ao salvar alterações"
      * }
@@ -157,7 +157,7 @@ module.exports = {
      * {
      *  message: "Espaço removido"
      * }
-     * @apiErrorExample Examplo de Erro:
+     * @apiErrorExample Exemplo de Erro:
      * {
      *  message: "ID invalido"
      * }

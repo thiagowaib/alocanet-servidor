@@ -25,7 +25,7 @@ module.exports = {
      * {
      *  message: "Apartamento cadastrado"
      * }
-     * @apiErrorExample Examplo de Erro:
+     * @apiErrorExample Exemplo de Erro:
      * {
      *  message: "Apartamento já cadastrado"
      * }
@@ -73,7 +73,7 @@ module.exports = {
      *  message: "Login bem-sucedido"
      *  tokenAcesso: [Token de Acesso JWT]
      * }
-     * @apiErrorExample Examplo de Erro:
+     * @apiErrorExample Exemplo de Erro:
      * {
      *  message: "Senha invalida"
      * }
@@ -128,7 +128,7 @@ module.exports = {
      * {
      *  message: "Alterações salvas"
      * }
-     * @apiErrorExample Examplo de Erro:
+     * @apiErrorExample Exemplo de Erro:
      * {
      *  message: "Falha ao salvar alterações"
      * }
@@ -173,7 +173,7 @@ module.exports = {
      * {
      *  message: "Apartamento descadastrado"
      * }
-     * @apiErrorExample Examplo de Erro:
+     * @apiErrorExample Exemplo de Erro:
      * {
      *  message: "Apartamento não encontrado"
      * }
@@ -211,7 +211,7 @@ module.exports = {
      *  "locacoes": [{Objeto Locação}, {Objeto Locação}],
      *  "cancelamentos": [{Objeto Cancelamento}, {Objeto Cancelamento}]
      * }
-     * @apiErrorExample Examplo de Erro:
+     * @apiErrorExample Exemplo de Erro:
      * {
      *  message: "Apartamento não encontrado"
      * }

@@ -20,7 +20,7 @@ module.exports = {
      * {
      *  message: "Admin cadastrado"
      * }
-     * @apiErrorExample Examplo de Erro:
+     * @apiErrorExample Exemplo de Erro:
      * {
      *  message: "Admin já existente"
      * }
@@ -66,7 +66,7 @@ module.exports = {
      *  message: "Login bem-sucedido"
      *  tokenAcesso: [Token de Acesso JWT]
      * }
-     * @apiErrorExample Examplo de Erro:
+     * @apiErrorExample Exemplo de Erro:
      * {
      *  message: "Senha invalida"
      * }
@@ -119,7 +119,7 @@ module.exports = {
      * {
      *  message: "Alterações salvas"
      * }
-     * @apiErrorExample Examplo de Erro:
+     * @apiErrorExample Exemplo de Erro:
      * {
      *  message: "Falha ao salvar alterações"
      * }
@@ -164,7 +164,7 @@ module.exports = {
      * {
      *  message: "Admin removido"
      * }
-     * @apiErrorExample Examplo de Erro:
+     * @apiErrorExample Exemplo de Erro:
      * {
      *  message: "ID invalido"
      * }

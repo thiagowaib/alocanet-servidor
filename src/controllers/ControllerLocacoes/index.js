@@ -25,7 +25,7 @@ module.exports = {
      * {
      *  message: "Locação feita com sucesso"
      * }
-     * @apiErrorExample Examplo de Erro:
+     * @apiErrorExample Exemplo de Erro:
      * {
      *  message: "Espaço já ocupado na data '22/09/2022'"
      * }
