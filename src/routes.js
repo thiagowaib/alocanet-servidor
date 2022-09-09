@@ -34,7 +34,7 @@ const {novoApto, loginApto, modificarSenha, removerApto, consultarApto} = requir
 routes.post('/novoApto', AuthTokenAcesso, novoApto)
 routes.post('/loginApto', loginApto)
 routes.put('/modificarSenha', AuthTokenAcesso, modificarSenha)
-routes.get('/consultarApto/:numero', AuthTokenAcesso, consultarApto) //! Não Finalizado
+routes.get('/consultarApto/:numero', AuthTokenAcesso, consultarApto)
 routes.delete('/removerApto/:numero', AuthTokenAcesso, removerApto)
 
 /**
