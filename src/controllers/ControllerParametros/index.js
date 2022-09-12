@@ -58,10 +58,15 @@ module.exports = {
      *      "maxDiasCancelar": {Number},
      *      "limiteLocacoes": {Number},
      * }
+     * @apiErrorExample Exemplo de Erro:
+     * {
+     *      message: "Parâmetros não inicializados"
+     * }
      */
      buscarParametros(req, res){
         // Busca os parâmetros
         Parametros.findOne({}, (err, param) => {
+            if(param===null) return res.status(404).send({message: "Parâmetros não inicializados"})
             const dados = {
                 minDiasAlocar: param.minDiasAlocar,
                 maxDiasAlocar: param.maxDiasAlocar,
