@@ -8,11 +8,13 @@ const schema = new mongoose.Schema({
         type: Number,
         default: 0,
         unique: true,
-        required: true,
+        required: [true, "Necessário um número de apartamento"],
+        min: [0, "O número do apartamento precisa ser maior que 0"]
     },
     senha: {
         type: String,
-        default: ""
+        default: "",
+        required: [true, "Neccessário uma senha para o apartamento"],
     },
     locacoes: [{
         type: String,

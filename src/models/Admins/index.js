@@ -8,11 +8,12 @@ const schema = new mongoose.Schema({
         type: String,
         default: "",
         unique: true,
-        required: true,
+        required: [true, "Necessário um nome de usuário para o Admin"],
     },
     senha: {
         type: String,
-        default: ""
+        default: "",
+        required: [true, "Necessário uma senha para o Admin"],
     }
 }, {timestamps: true})
 
