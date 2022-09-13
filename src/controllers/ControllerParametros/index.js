@@ -119,17 +119,26 @@ module.exports = {
         // Busca o objeto de parâmetros
         Parametros.findOne({}, (err, param) => {
             if(err) return res.status(400).send({message: "Erro ao acessar parâmetros", error:err})
-            
+            if(param===null) return res.status(404).send({message: "Parâmetros não inicializados"})
+
             // Identifica qual parâmetro deve ser alterado
             switch (tag) {
                 case "mindiasalocar":
-                    if(value) param.minDiasAlocar = value
+                    // Verififica se maxDiasAlocar > minDiasAlocar
+                    if(value && value >= param.maxDiasAlocar) return res.status(400).send({message: "minDiasAlocar deve ser menor que maxDiasAlocar"})
+                    
+                    // Atualiza o valor do parâmetro e o salva
+                    if(value && value >= 0) param.minDiasAlocar = value
                         param.save((err)=>{
                             if(err) return res.status(400).send({message: "Falha ao salvar alterações"})
                             else return res.status(200).send({message: "Alterações salvas"})
                         })
                     break;
                 case "maxdiasalocar":
+                    // Verififica se maxDiasAlocar > minDiasAlocar
+                    if(value && value <= param.minDiasAlocar) return res.status(400).send({message: "maxDiasAlocar deve ser maior que minDiasAlocar"})
+                    
+                    // Atualiza o valor do parâmetro e o salva
                     if(value) param.maxDiasAlocar = value
                         param.save((err)=>{
                             if(err) return res.status(400).send({message: "Falha ao salvar alterações"})
@@ -137,6 +146,10 @@ module.exports = {
                         })
                     break;
                 case "mindiascancelar":
+                    // Verififica se maxDiasCancelar > minDiasCancelar
+                    if(value && value >= param.maxDiasCancelar) return res.status(400).send({message: "minDiasCancelar deve ser menor que maxDiasCancelar"})
+                    
+                    // Atualiza o valor do parâmetro e o salva
                     if(value) param.minDiasCancelar = value
                         param.save((err)=>{
                             if(err) return res.status(400).send({message: "Falha ao salvar alterações"})
@@ -144,6 +157,10 @@ module.exports = {
                         })
                     break;
                 case "maxdiascancelar":
+                    // Verififica se maxDiasCancelar > minDiasCancelar
+                    if(value && value <= param.minDiasCancelar) return res.status(400).send({message: "maxDiasCancelar deve ser maior que minDiasCancelar"})
+                    
+                    // Atualiza o valor do parâmetro e o salva
                     if(value) param.maxDiasCancelar = value
                         param.save((err)=>{
                             if(err) return res.status(400).send({message: "Falha ao salvar alterações"})
@@ -158,7 +175,7 @@ module.exports = {
                         })
                     break;
                 default:
-                    return res.status(400).send({message:"Tag errada",tagsDisponiveis: [
+                    return res.status(400).send({message:"Tag inválida",tagsDisponiveis: [
                         "minDiasAlocar",
                         "maxDiasAlocar",
                         "minDiasCancelar",

@@ -50,13 +50,11 @@ module.exports = {
             if(err) return res.status(400).send({message: "Falha ao cancelar locação", error:err})
 
             Espacos.findById(locacao.espacoId, (err, espaco) => {
-                // Remove a data de []ocupados do objeto Espaço
-                espaco.ocupados = espaco.ocupados.filter(data => data !== locacao.data)
-                espaco.save((err) => {
-                    if(err) return res.status(400).send({message: "Falha remover data do objeto espaço", error: err})
-                })
-
+                if(espaco===null) return res.status(404).send({message: "Espaço da locação não encontrado"})
+                
                 Apartamentos.findById(locacao.apartamentoId, (err, apto) => {
+                    if(apto===null) return res.status(404).send({message: "Apartamento da locação não encontrado"})
+                    
                     // Remove o _id de []locacoes e adiciona em []cancelamentos do objeto Apartamento
                     apto.locacoes = apto.locacoes.filter(id => id !== locacao._id.toString())
                     apto.cancelamentos.push(savedCancelamento._id)
@@ -64,6 +62,12 @@ module.exports = {
                     apto.save((err) => {
                         if(err) return res.status(400).send({message: "Falha ao mover id de locação no objeto apartamento", error:err})
                     })
+                })
+
+                // Remove a data de []ocupados do objeto Espaço
+                espaco.ocupados = espaco.ocupados.filter(data => data !== locacao.data)
+                espaco.save((err) => {
+                    if(err) return res.status(400).send({message: "Falha remover data do objeto espaço", error: err})
                 })
 
                 // Procura e remove o objeto de Locação
