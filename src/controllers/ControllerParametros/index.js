@@ -125,7 +125,7 @@ module.exports = {
             switch (tag) {
                 case "mindiasalocar":
                     // Verififica se maxDiasAlocar > minDiasAlocar
-                    if(value && value >= param.maxDiasAlocar) return res.status(400).send({message: "minDiasAlocar deve ser menor que maxDiasAlocar"})
+                    if(value && param.maxDiasAlocar > 0 && value > param.maxDiasAlocar) return res.status(400).send({message: "minDiasAlocar deve ser <= que maxDiasAlocar"})
                     
                     // Atualiza o valor do parâmetro e o salva
                     if(value && value >= 0) param.minDiasAlocar = value
@@ -136,7 +136,7 @@ module.exports = {
                     break;
                 case "maxdiasalocar":
                     // Verififica se maxDiasAlocar > minDiasAlocar
-                    if(value && value <= param.minDiasAlocar) return res.status(400).send({message: "maxDiasAlocar deve ser maior que minDiasAlocar"})
+                    if(value && param.minDiasAlocar > 0 && value < param.minDiasAlocar) return res.status(400).send({message: "maxDiasAlocar deve ser >= que minDiasAlocar"})
                     
                     // Atualiza o valor do parâmetro e o salva
                     if(value) param.maxDiasAlocar = value
@@ -147,7 +147,7 @@ module.exports = {
                     break;
                 case "mindiascancelar":
                     // Verififica se maxDiasCancelar > minDiasCancelar
-                    if(value && value >= param.maxDiasCancelar) return res.status(400).send({message: "minDiasCancelar deve ser menor que maxDiasCancelar"})
+                    if(value && param.maxDiasCancelar > 0 && value > param.maxDiasCancelar) return res.status(400).send({message: "minDiasCancelar deve ser <= que maxDiasCancelar"})
                     
                     // Atualiza o valor do parâmetro e o salva
                     if(value) param.minDiasCancelar = value
@@ -158,7 +158,7 @@ module.exports = {
                     break;
                 case "maxdiascancelar":
                     // Verififica se maxDiasCancelar > minDiasCancelar
-                    if(value && value <= param.minDiasCancelar) return res.status(400).send({message: "maxDiasCancelar deve ser maior que minDiasCancelar"})
+                    if(value && param.minDiasCancelar > 0 && value < param.minDiasCancelar) return res.status(400).send({message: "maxDiasCancelar deve ser >= que minDiasCancelar"})
                     
                     // Atualiza o valor do parâmetro e o salva
                     if(value) param.maxDiasCancelar = value
