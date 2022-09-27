@@ -1,5 +1,5 @@
 // * Importações
-const {Cancelamentos, Locacoes, Apartamentos, Espacos} = require('../../models')
+const {Cancelamentos, Locacoes, Apartamentos, Espacos, Parametros} = require('../../models')
 
 // * Exportação dos métodos do Controller
 module.exports = {
@@ -35,6 +35,19 @@ module.exports = {
         const locacao = await Locacoes.findById(req.params.id)
         if(locacao === null) return res.status(404).send({message: "Locação não encontrada"})
 
+        // Busca os parâmetros cadastrados no BD
+        const {minDiasCancelar, maxDiasCancelar} = await Parametros.findOne({})
+        
+        // Calcula a diferença de dias entre a data atual e a data da locação
+        const dataAtual = new Date()
+        const dataFormatada = `${locacao.data.split("/")[2]}/${locacao.data.split("/")[1]}/${locacao.data.split("/")[0]}`
+        const dataDesejada = new Date(dataFormatada)
+        const diffDias = Math.floor((dataDesejada.getTime() - dataAtual.getTime()) / (1000 * 60 * 60 * 24))
+
+        // Verifica se minDiasCancelar < diffDias < maxDiasCancelar
+        if(maxDiasCancelar > 0 && diffDias > maxDiasCancelar) return res.status(401).send({message: `A data desejada excede o máximo de ${maxDiasCancelar} dias de antecedência`})
+        else if(minDiasCancelar > 0 && diffDias < minDiasCancelar) return res.status(401).send({message: `A data desejada excede o mínimo de ${minDiasCancelar} dias de antecedência`})
+        
         // Cria novo objeto de cancelamento
         const cancelamento = new Cancelamentos({
             data: locacao.data,

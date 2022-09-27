@@ -42,13 +42,25 @@ module.exports = {
         Locacoes.findOne({data: data, espacoId: espacoId}, async(err, obj) => {
             if(obj) return res.status(400).send({message: `Espaço já ocupado na data '${data}'`})
 
+            // Busca os parâmetros cadastrados no BD
+            const {minDiasAlocar, maxDiasAlocar, limiteLocacoes} = await Parametros.findOne({})
+
             // Confere o limite de locações e a quantidade de locações desse apartamento
-            const limiteLocacoes = await Parametros.findOne({}).limiteLocacoes
-            const numLocacoes = await Locacoes.find({apartamento: apartamento}).lenth
+            const numLocacoes = (await Locacoes.find({apartamento: apartamento})).length
             if(numLocacoes > limiteLocacoes && limiteLocacoes > 0) return res.status(401).send({message: `Limite de '${limiteLocacoes}' locações já atingido`})
             
-            Espacos.findById(espacoId, (err, espaco) => {
+            // Calcula a diferença de dias entre a data atual e a data da locação
+            const dataAtual = new Date()
+            const dataFormatada = `${data.split("/")[2]}/${data.split("/")[1]}/${data.split("/")[0]}`
+            const dataDesejada = new Date(dataFormatada)
+            const diffDias = Math.floor((dataDesejada.getTime() - dataAtual.getTime()) / (1000 * 60 * 60 * 24))
 
+            // Verifica se minDiasAlocar < diffDias < maxDiasAlocar
+            if(diffDias < 0) return res.status(401).send({message: "A data selecionada já está no passado"})
+            else if(maxDiasAlocar > 0 && diffDias > maxDiasAlocar) return res.status(401).send({message: `A data desejada excede o máximo de ${maxDiasAlocar} dias de antecedência`})
+            else if(minDiasAlocar > 0 && diffDias < minDiasAlocar) return res.status(401).send({message: `A data desejada excede o mínimo de ${minDiasAlocar} dias de antecedência`})
+
+            Espacos.findById(espacoId, (err, espaco) => {
                 Apartamentos.findOne({numero: apartamento}, (err, apto) => {      
                     
                     // Cria novo objeto de Locação
