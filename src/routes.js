@@ -75,5 +75,15 @@ routes.get('/initParametros', initParametros)
 routes.get('/buscarParametros', AuthTokenAcesso, buscarParametros)
 routes.put('/modificarParametro/:tag/:value', AuthTokenAcesso, modificarParametro)
 
+/**
+ * Rotas dos métodos criados
+ * no controlador referente aos usuários
+ * (Generalização [Admins|Apartamentos])
+ * ~ControllerUsuarios
+ */
+const {authJWT, buscarDatas} = require('./controllers')
+routes.get('/authJWT', AuthTokenAcesso, authJWT)
+routes.get('/buscarDatas', AuthTokenAcesso, buscarDatas)
+
 // * Exportação das rotas para main.js
 module.exports = routes
