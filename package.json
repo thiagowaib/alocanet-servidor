@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/thiagowaib/alocanet-servidor#readme",
   "dependencies": {
+    "apidoc": "^0.53.0",
     "bcrypt": "^5.0.1",
     "cors": "^2.8.5",
     "dotenv": "^16.0.2",

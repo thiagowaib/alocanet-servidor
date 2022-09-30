@@ -5,6 +5,7 @@ const ControllerCancelamentos = require('./ControllerCancelamentos')
 const ControllerEspacos = require('./ControllerEspacos')
 const ControllerLocacoes = require('./ControllerLocacoes')
 const ControllerParametros = require('./ControllerParametros')
+const ControllerUsuarios = require('./ControllerUsuarios')
 
 
 // * Exportação
@@ -14,5 +15,6 @@ module.exports = {
     ...ControllerCancelamentos,
     ...ControllerEspacos,
     ...ControllerLocacoes,
-    ...ControllerParametros
+    ...ControllerParametros,
+    ...ControllerUsuarios
 }
