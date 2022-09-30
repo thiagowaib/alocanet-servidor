@@ -1,6 +1,5 @@
 // * Importações
-const {Admins, Apartamentos, Locacoes, Espacos} = require('../../models')
-const jwt = require('jsonwebtoken')
+const {Apartamentos, Locacoes, Espacos, Parametros} = require('../../models')
 
 // * Exportação dos métodos do controler
 module.exports = {
@@ -8,7 +7,7 @@ module.exports = {
     /**
      * @api {get} /authJWT Autêntifica o token de acesso (JWT) do usuário
      * @apiName authJWT
-     * @apiGroup Usuarios
+     * @apiGroup Usuários
      * @apiVersion 1.0.0
      * 
      * @apiPermission Admin | Apartamento
@@ -30,7 +29,7 @@ module.exports = {
     /**
      * @api {get} /buscarDatas Busca as datas em que existem locações
      * @apiName buscarDatas
-     * @apiGroup Usuarios
+     * @apiGroup Usuários
      * @apiVersion 1.0.0
      * 
      * @apiPermission Admin | Apartamento
@@ -68,18 +67,119 @@ module.exports = {
         })
     },
 
+    /**
+     * @api {post} /buscarDetalhes Busca detalhes da data desejada
+     * @apiName buscarDetalhes
+     * @apiGroup Usuários
+     * @apiVersion 1.0.0
+     * 
+     * @apiPermission Admin | Apartamento
+     * @apiHeader {String} auth Token de acesso JWT
+     * @apiHeaderExample {json} Exemplo de Header:
+     * {
+     *  "auth": [Token de Acesso JWT]
+     * }
+     * 
+     * @apiBody {String} dataDesejada Data desejada para informar detalhes
+     * @apiBody {Number} [numeroApto] Número do apartamento (caso o cliente seja um Apartamento)
+     * 
+     * @apiSuccessExample Exemplo de Sucesso (Apartamentos):
+     * {
+     *  dados: {
+     *      limiteLocacoes: 4,
+     *      numeroLocacoes: 2,
+     *  },
+     *  espacos: [
+     *     {nome, disponivel, valor},
+     *     {nome, disponivel, valor}
+     *  ]
+     * }
+     * @apiSuccessExample Exemplo de Sucesso (Admins):
+     * {
+     *  dados: [
+     *      {espaco, apartamento, desde, valor},
+     *      {espaco, apartamento, desde, valor}
+     *  ]
+     * }
+     * @apiErrorExample Exemplo de Erro:
+     * {
+     *  message: "Erro ao buscar locações"
+     * }
+     */
     buscarDetalhes(req, res){
-        const data = req.params.data
 
-        Espacos.find({}, (err, espacos) => {
-            if(err) return res.status(400).send({message: "Erro ao buscar espaços"})
+        const {dataDesejada, numeroApto} = req.body 
 
-            // Verifica se há espaços cadastrados
-            if(espacos===null) return res.status(404).send({message: "Não há espaços cadastrados"})
+        if(req.payload.belongsTo === "Apartamentos")
+        {
+            Espacos.find({}, (err, espacos) => {
+                if(err) return res.status(400).send({message: "Erro ao buscar espaços"})
+    
+                // Verifica se há espaços cadastrados
+                if(espacos===null) return res.status(404).send({message: "Não há espaços cadastrados"})
 
-            
-        })
+                // Compila os dados de cada espaco
+                const espacos = espacos.map(espaco => {
+                    // Verifica disponibilidade do espaço na dataDesejada
+                    let disponivel
+                    if(espaco.ocupados.includes(dataDesejada))
+                        disponivel = false
+                    else
+                        disponivel = true
+
+                    // Consulta o valor e nome do espaço
+                    let valor = espaco.valorAtual
+                    let nome = espaco.nome
+                    return {
+                        nome,
+                        disponivel,
+                        valor
+                    }
+                })
+
+                // Verifica se há o parâmetro LimiteLocacoes e se existe, retorna o número de locações ativas
+                let dados = null
+                Parametros.findOne({}, (err, param) => {
+                    if(err) return res.status(400).send({message: "Erro ao buscar parâmetros"})
+                    if(param===null) return res.status(404).send({message: "Parâmetros não inicializados"})
+
+                    if(param.limiteLocacoes > 0)
+                    {
+                        Apartamentos.findOne({numero: numeroApto}, (err, apto) => {
+                            if(err) return res.status(400).send({message: "Erro ao buscar apartamento"})
+                            if(apto===null) return res.status(404).send({message: "Apartamento não encontrado"})
+
+                            dados = {
+                                limiteLocacoes: param.limiteLocacoes,
+                                numeroLocacoes: apto.locacoes.length
+                            }
+                        })
+                    }
+                })
+
+                return res.status(200).send({dados, espacos})
+            })
+        } else {
+            Locacoes.find({data: dataDesejada}, (err, locacoes) => {
+                if(err) return res.status(400).send({message: "Erro ao buscar locações"})
+                if(locacoes===null) return res.status(200).send({dados: []})
+
+                // Compila os dados das locacoes
+                const dados = locacoes.map(locacao => {
+                    let espaco = locacao.espaco
+                    let apto = locacao.apartamento
+                    let desde = locacao._createdAt
+                    let valor = locacao.valor
+                    return {
+                        espaco,
+                        apto,
+                        desde,
+                        valor
+                    }
+                })
+
+                return res.status(200).send({dados})
+            })
+        }
     }
-
-
 }

@@ -81,9 +81,11 @@ routes.put('/modificarParametro/:tag/:value', AuthTokenAcesso, modificarParametr
  * (Generalização [Admins|Apartamentos])
  * ~ControllerUsuarios
  */
-const {authJWT, buscarDatas} = require('./controllers')
+const {authJWT, buscarDatas, buscarDetalhes} = require('./controllers')
 routes.get('/authJWT', AuthTokenAcesso, authJWT)
 routes.get('/buscarDatas', AuthTokenAcesso, buscarDatas)
+routes.get('/buscarDatas', AuthTokenAcesso, buscarDatas)
+routes.post('/buscarDetalhes', AuthTokenAcesso, buscarDetalhes)
 
 // * Exportação das rotas para main.js
 module.exports = routes
