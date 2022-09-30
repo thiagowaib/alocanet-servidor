@@ -128,7 +128,7 @@ module.exports = {
                     if(value && param.maxDiasAlocar > 0 && value > param.maxDiasAlocar) return res.status(400).send({message: "minDiasAlocar deve ser <= que maxDiasAlocar"})
                     
                     // Atualiza o valor do parâmetro e o salva
-                    if(value && value >= 0) param.minDiasAlocar = value
+                    if(value!==null && value >= 0) param.minDiasAlocar = value
                         param.save((err)=>{
                             if(err) return res.status(400).send({message: "Falha ao salvar alterações"})
                             else return res.status(200).send({message: "Alterações salvas"})
@@ -139,7 +139,7 @@ module.exports = {
                     if(value && param.minDiasAlocar > 0 && value < param.minDiasAlocar) return res.status(400).send({message: "maxDiasAlocar deve ser >= que minDiasAlocar"})
                     
                     // Atualiza o valor do parâmetro e o salva
-                    if(value) param.maxDiasAlocar = value
+                    if(value!==null) param.maxDiasAlocar = value
                         param.save((err)=>{
                             if(err) return res.status(400).send({message: "Falha ao salvar alterações"})
                             else return res.status(200).send({message: "Alterações salvas"})
@@ -150,7 +150,7 @@ module.exports = {
                     if(value && param.maxDiasCancelar > 0 && value > param.maxDiasCancelar) return res.status(400).send({message: "minDiasCancelar deve ser <= que maxDiasCancelar"})
                     
                     // Atualiza o valor do parâmetro e o salva
-                    if(value) param.minDiasCancelar = value
+                    if(value!==null) param.minDiasCancelar = value
                         param.save((err)=>{
                             if(err) return res.status(400).send({message: "Falha ao salvar alterações"})
                             else return res.status(200).send({message: "Alterações salvas"})
@@ -161,14 +161,14 @@ module.exports = {
                     if(value && param.minDiasCancelar > 0 && value < param.minDiasCancelar) return res.status(400).send({message: "maxDiasCancelar deve ser >= que minDiasCancelar"})
                     
                     // Atualiza o valor do parâmetro e o salva
-                    if(value) param.maxDiasCancelar = value
+                    if(value!==null) param.maxDiasCancelar = value
                         param.save((err)=>{
                             if(err) return res.status(400).send({message: "Falha ao salvar alterações"})
                             else return res.status(200).send({message: "Alterações salvas"})
                         })
                     break;
                 case "limitelocacoes":
-                    if(value) param.limiteLocacoes = value
+                    if(value!==null) param.limiteLocacoes = value
                         param.save((err)=>{
                             if(err) return res.status(400).send({message: "Falha ao salvar alterações"})
                             else return res.status(200).send({message: "Alterações salvas"})

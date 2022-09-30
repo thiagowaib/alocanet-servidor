@@ -119,7 +119,7 @@ module.exports = {
                 if(espacos===null) return res.status(404).send({message: "Não há espaços cadastrados"})
 
                 // Compila os dados de cada espaco
-                const espacos = espacos.map(espaco => {
+                const dadosEspacos = espacos.map(espaco => {
                     // Verifica disponibilidade do espaço na dataDesejada
                     let disponivel
                     if(espaco.ocupados.includes(dataDesejada))
@@ -138,7 +138,6 @@ module.exports = {
                 })
 
                 // Verifica se há o parâmetro LimiteLocacoes e se existe, retorna o número de locações ativas
-                let dados = null
                 Parametros.findOne({}, (err, param) => {
                     if(err) return res.status(400).send({message: "Erro ao buscar parâmetros"})
                     if(param===null) return res.status(404).send({message: "Parâmetros não inicializados"})
@@ -149,15 +148,17 @@ module.exports = {
                             if(err) return res.status(400).send({message: "Erro ao buscar apartamento"})
                             if(apto===null) return res.status(404).send({message: "Apartamento não encontrado"})
 
-                            dados = {
+                            const dados = {
                                 limiteLocacoes: param.limiteLocacoes,
                                 numeroLocacoes: apto.locacoes.length
                             }
+                            return res.status(200).send({dados, espacos: dadosEspacos})
                         })
+                    } else {
+                        return res.status(200).send({dados: null, espacos: dadosEspacos})
                     }
                 })
 
-                return res.status(200).send({dados, espacos})
             })
         } else {
             Locacoes.find({data: dataDesejada}, (err, locacoes) => {
@@ -166,9 +167,14 @@ module.exports = {
 
                 // Compila os dados das locacoes
                 const dados = locacoes.map(locacao => {
+                    let createdAt = new Date(locacao.createdAt.toString())
+                    let dia = createdAt.getDate()
+                    let mes = createdAt.getMonth()
+                    let ano = createdAt.getFullYear()
+                    
+                    let desde = `${dia}/${mes >= 10 ? mes : "0"+mes}/${ano}`
                     let espaco = locacao.espaco
                     let apto = locacao.apartamento
-                    let desde = locacao._createdAt
                     let valor = locacao.valor
                     return {
                         espaco,
