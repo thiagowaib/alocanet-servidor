@@ -90,7 +90,7 @@ module.exports = {
                     const jwtPayload = {
                         numero: apto.numero,
                         belongsTo: "Apartamentos",
-                        exp: SetExpDate(Date.now(), 1, "h")
+                        exp: SetExpDate(Date.now(), 1, "d")
                     }
 
                     // Token de Acesso enviado ao usuário p/ autentificar
