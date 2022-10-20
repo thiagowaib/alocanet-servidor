@@ -183,10 +183,23 @@ module.exports = {
 
         const numero = req.params.numero
 
-        // Busca e remove o objeto
-        Apartamentos.findOneAndRemove({numero: numero}, (err, apto) => {
+        // Busca e remove o objeto Apartamento
+        Apartamentos.findOneAndRemove({numero: numero}, async (err, apto) => {
             if(apto === null) return res.status(404).send({message: "Apartamento não encontrado"})
-            else return res.status(200).send({message: "Apartamento descadastrado"})
+
+            // Busca e remove os objetos de Locação referentes ao Apto
+            const locacoes = await Locacoes.find({apartamento: numero})
+            locacoes.forEach(async (locacao) => {                         // Remove cada uma das locações
+                await Locacoes.findByIdAndDelete(locacao._id.toString())
+            })                    
+
+            // Busca e remove os objetos de Cancelamento referentes ao Apto
+            const cancelamentos = await Cancelamentos.find({apartamento: numero})
+            cancelamentos.forEach(async (cancelamento) => {               // Remove cada uma das locações
+                await Cancelamentos.findByIdAndDelete(cancelamento._id.toString())
+            })
+
+            return res.status(200).send({message: "Apartamento descadastrado"})
         })
     },
     
