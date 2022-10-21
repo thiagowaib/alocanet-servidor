@@ -139,8 +139,8 @@ module.exports = {
     },
 
     /**
-     * @api {delete} /removeEspaco/:id Remover Espaço via ID
-     * @apiName removeEspacoById
+     * @api {delete} /removerEspaco/:id Remover Espaço via ID
+     * @apiName removerEspacoById
      * @apiGroup Espaços
      * @apiVersion 1.0.0
      * 
