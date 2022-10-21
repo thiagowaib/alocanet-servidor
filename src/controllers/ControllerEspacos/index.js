@@ -1,5 +1,5 @@
 // * Importações
-const {Espacos} = require('../../models')
+const {Espacos, Apartamentos, Locacoes, Cancelamentos} = require('../../models')
 
 // * Exportação dos métodos do Controller
 module.exports = {
@@ -168,10 +168,31 @@ module.exports = {
         const removeId = req.params.id
 
         // Busca e remove o objeto
-        Espacos.findByIdAndRemove(removeId, (err, espaco)=>{
+        Espacos.findByIdAndRemove(removeId, async (err, espaco)=>{
             if(err) return res.status(400).send({message: "Erro ao remover espaço", error: err})
             else if(espaco===null) return res.status(400).send({message: "ID inválido"})
-            else return res.status(200).send({message: "Espaço removido"})
+
+            // Busca e remove os objetos de Locação referentes ao Espaço
+            const locacoes = await Locacoes.find({espacoId: removeId})
+            locacoes.forEach(async (locacao) => {                         // Remove cada uma das locações
+                // Remove o ID de locacoes[] do apto da locação
+                const apto = await Apartamentos.findById(locacao.apartamentoId)
+                apto.locacoes = apto.locacoes.filter(id => id !== locacao._id.toString())
+                apto.save()
+                await Locacoes.findByIdAndDelete(locacao._id.toString())
+            })                    
+
+            // Busca e remove os objetos de Cancelamento referentes ao Espaço
+            const cancelamentos = await Cancelamentos.find({espacoId: removeId})
+            cancelamentos.forEach(async (cancelamento) => {               // Remove cada uma das locações
+                // Remove o ID de cancelamentos do apto do cancelamento
+                const apto = await Apartamentos.findById(cancelamento.apartamentoId)
+                apto.cancelamentos = apto.cancelamentos.filter(id => id !== cancelamento._id.toString())
+                apto.save()
+                await Cancelamentos.findByIdAndDelete(cancelamento._id.toString())
+            })
+            
+            return res.status(200).send({message: "Espaço removido"})
         })
     }
 
