@@ -1,5 +1,5 @@
 // * Importações
-const {Apartamentos, Locacoes, Cancelamentos} = require('../../models')
+const {Apartamentos, Espacos, Locacoes, Cancelamentos} = require('../../models')
 const jwt = require('jsonwebtoken')
 
 // * Exportação dos métodos do Controller
@@ -190,6 +190,14 @@ module.exports = {
             // Busca e remove os objetos de Locação referentes ao Apto
             const locacoes = await Locacoes.find({apartamento: numero})
             locacoes.forEach(async (locacao) => {                         // Remove cada uma das locações
+
+                // Remover a data da locação do ocupados[] no espaço da locação
+                const espaco = await Espacos.findById(locacao.espacoId)
+                espaco.ocupados = espaco.ocupados.filter((data) => {
+                    return data !== locacao.data
+                })
+                espaco.save()
+
                 await Locacoes.findByIdAndDelete(locacao._id.toString())
             })                    
 
