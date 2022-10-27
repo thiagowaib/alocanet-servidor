@@ -89,8 +89,8 @@ module.exports = {
     },
 
     /**
-     * @api {put} /modificarSenha/:id Modificar dados do Espaço
-     * @apiName modificarSenhaById
+     * @api {put} /modificarEspaco/:id Modificar dados do Espaço
+     * @apiName modificarEspacoById
      * @apiGroup Espaços
      * @apiVersion 1.0.0
      * 

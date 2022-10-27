@@ -90,15 +90,15 @@ module.exports = {
      *      numeroLocacoes: 2,
      *  },
      *  espacos: [
-     *     {nome, disponivel, valor},
-     *     {nome, disponivel, valor}
+     *     {nome{STRING}, disponivel{BOOL}, valor{NUMBER}, espacoId{STRING}},
+     *     {nome{STRING}, disponivel{BOOL}, valor{NUMBER}, espacoId{STRING}}
      *  ]
      * }
      * @apiSuccessExample Exemplo de Sucesso (Admins):
      * {
      *  dados: [
-     *      {espaco, apartamento, desde, valor},
-     *      {espaco, apartamento, desde, valor}
+     *      {espaco{STRING}, apartamento{NUMBER}, desde{STRING}, valor{NUMBER}},
+     *      {espaco{STRING}, apartamento{NUMBER}, desde{STRING}, valor{NUMBER}}
      *  ]
      * }
      * @apiErrorExample Exemplo de Erro:
@@ -133,7 +133,8 @@ module.exports = {
                     return {
                         nome,
                         disponivel,
-                        valor
+                        valor,
+                        espacoId: espaco._id.toString()
                     }
                 })
 
